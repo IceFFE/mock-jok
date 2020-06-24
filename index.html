@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8" />
+        <title></title>
+        <style type="text/css">
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                display: flex;
+                padding-top: 100px;
+                padding-left: 100px;
+                padding-right: 100px;
+            }
+            .input-div,
+            .output-div {
+                flex: 1;
+            }
+            h2 {
+                padding-bottom: 20px;
+            }
+            label {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="input-div">
+                <h2>录入</h2>
+                <div>
+                    <label for="in-src">
+                        接口
+                    </label>
+                    <input id="in-src" />
+                    <label for="in-type">
+                        类型
+                    </label>
+                    <input id="in-type" />
+                    <label for="in-json">
+                        内容
+                    </label>
+                    <textarea id="in-json" cols="40" rows="5"></textarea>
+                    <label for="in-func">
+                        交互逻辑
+                    </label>
+                    <textarea id="in-func" cols="40" rows="5"> </textarea>
+                </div>
+                <div>
+                    <button onclick="create()">
+                        提交
+                    </button>
+                </div>
+            </div>
+            <div class="output-div">
+                <h2>查询</h2>
+                <label for>
+                    交互逻辑
+                </label>
+                <input id="out-src" />
+                <div>
+                    <button onclick="retrieve()">
+                        获取
+                    </button>
+                </div>
+                <textarea id="result" cols="40" rows="5"></textarea>
+            </div>
+        </div>
+    </body>
+    <script>
+        function create() {
+            var src = document.querySelector("#in-src").value.trim();
+            var type = document.querySelector("#in-type").value.trim();
+            var json = document.querySelector("#in-json").value.trim();
+            var func = document.querySelector("#in-func").value.trim();
+            console.log(src, type, json, func);
+
+            fetch("http://localhost:6002/createData", {
+                method: "post",
+                body: JSON.stringify({
+                    src,
+                    type,
+                    json,
+                    func
+                })
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (myJson) {
+                    console.log(123, myJson);
+                });
+        }
+        function retrieve() {
+            var src = document.querySelector("#out-src").value.trim();
+            if (!src) {
+                alert("请输入正确路径");
+                return;
+            }
+            fetch("http://localhost:6003/" + src)
+                .then(function (response) {
+                    return response.text();
+                })
+                .then(function (myJson) {
+                    console.log(123, myJson);
+                    document.querySelector("#result").value = myJson;
+                });
+        }
+    </script>
+</html>
